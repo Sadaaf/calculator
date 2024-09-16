@@ -1,6 +1,6 @@
 // Calculator display highest digits 19
-let previousInput = "0";
-let currentInput = "0";
+let previousInput = null;
+let currentInput = null;
 
 const display = document.querySelector(".display");
 
@@ -11,14 +11,17 @@ const clear = document.querySelector(".clear");
 const positiveNegativeToggler = document.querySelector(
   ".positive-negative-toggler"
 );
-const addition = document.querySelector(".addition");
+const arithmeticOps = document.querySelectorAll(".arithmeticOp");
 
 ///////////////////
 // functionality //
 ///////////////////
 clear.addEventListener("click", handleClear);
 positiveNegativeToggler.addEventListener("click", togglePositiveNegative);
-addition.addEventListener("click", handleArithmeticOperation);
+
+arithmeticOps.forEach((a) =>
+  a.addEventListener("click", handleArithmeticOperation)
+);
 
 // Adding functionality to each number
 for (let i = 0; i <= 9; i++) {
@@ -31,8 +34,8 @@ for (let i = 0; i <= 9; i++) {
 //handlerFunctions//
 ////////////////////
 function handleClear() {
-  setCurrentInput("0");
-  previousInput = "0";
+  setCurrentInput(0);
+  setPreviousInput(0);
   updateDisplay();
 }
 
@@ -41,13 +44,35 @@ function togglePositiveNegative() {
   updateDisplay();
 }
 
+/**
+ * 1 Show number if no number previously entered otherwise
+ * 2 if press +/-/x/div/% show the number but wait for next number input
+ * 3 remove previous number take next number up until +/-/x/div/% is pressed
+ * 4 when +/-/x/div/%  is pressed
+ * 5 do the calculation and show result.
+ * 6 If new number pressed remove previous and show the new number
+ *
+ * take number
+ * if currentValue 0
+ *  currentValue+=number
+ * endIf
+ * else currentValue = parseFloat(currentValue.toString()+number)
+ * updateDisplay()
+ */
+
 function handleNumberPress(event) {
-  setCurrentInput(filterInput(currentInput, event.target.value));
+  const number = event.target.value;
+  if (!currentInput) {
+    setCurrentInput(number);
+  }
+  setCurrentInput(parseFloat(currentInput + number));
+
   updateDisplay();
 }
 
 function handleArithmeticOperation(event) {
   const operation = event.target.value;
+  const result = handleCalculation(previousInput, operation, currentInput);
   //TODO create arithmeticOperation
 }
 
@@ -55,34 +80,26 @@ function handleArithmeticOperation(event) {
 // Helper Functions //
 //////////////////////
 function updateDisplay() {
-  if (currentInput.length < 19) display.innerText = currentInput;
-}
-
-function filterInput(currentValue, valueToAdd) {
-  if (currentValue === "0") {
-    if (valueToAdd === "0") {
-      return "0";
-    } else {
-      return valueToAdd;
-    }
-  }
-  return (currentValue += valueToAdd);
+  if (currentInput.toString().length < 19) display.innerText = currentInput;
 }
 
 function setCurrentInput(value) {
-  if (value.length < 19) {
+  if (value.toString().length < 19) {
     currentInput = value;
   }
 }
 
-const calculateResult = (value1, operation, value2) => {
+function setPreviousInput(value) {
+  if (value.toString().length < 19) {
+    previousInput = value;
+  }
+}
+
+const handleCalculation = (value1, operation, value2) => {
   let result = 0;
-  value1 = parseFloat(value1);
-  value2 = parseFloat(value2);
   switch (operation) {
     case "+":
       result = value1 + value2;
-      console.log(value1 + value2);
       break;
     case "-":
       result = value1 - value2;
@@ -97,8 +114,8 @@ const calculateResult = (value1, operation, value2) => {
       result = (value1 / 100) * value2;
       break;
     default:
-      result = "Unable to process request";
+      result = "Error";
+      break;
   }
-  if (result % 1 != 0) return result;
-  else return parseInt(result);
+  return result % 1 === 0 ? parseInt(result) : result;
 };
