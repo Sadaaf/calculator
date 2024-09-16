@@ -64,8 +64,9 @@ function handleNumberPress(event) {
   const number = event.target.value;
   if (!currentInput) {
     setCurrentInput(number);
+  } else {
+    setCurrentInput(parseFloat(currentInput + number));
   }
-  setCurrentInput(parseFloat(currentInput + number));
 
   updateDisplay();
 }
