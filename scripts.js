@@ -11,12 +11,14 @@ const clear = document.querySelector(".clear");
 const positiveNegativeToggler = document.querySelector(
   ".positive-negative-toggler"
 );
+const addition = document.querySelector(".addition");
 
 ///////////////////
 // functionality //
 ///////////////////
 clear.addEventListener("click", handleClear);
 positiveNegativeToggler.addEventListener("click", togglePositiveNegative);
+addition.addEventListener("click", handleArithmeticOperation);
 
 // Adding functionality to each number
 for (let i = 0; i <= 9; i++) {
@@ -33,6 +35,7 @@ function handleClear() {
   previousInput = "0";
   updateDisplay();
 }
+
 function togglePositiveNegative() {
   setCurrentInput(currentInput * -1);
   updateDisplay();
@@ -41,6 +44,11 @@ function togglePositiveNegative() {
 function handleNumberPress(event) {
   setCurrentInput(filterInput(currentInput, event.target.value));
   updateDisplay();
+}
+
+function handleArithmeticOperation(event) {
+  const operation = event.target.value;
+  //TODO create arithmeticOperation
 }
 
 //////////////////////
@@ -67,8 +75,30 @@ function setCurrentInput(value) {
   }
 }
 
-function setCurrentInput(value) {
-  if (value.length < 19) {
-    currentInput = value;
+const calculateResult = (value1, operation, value2) => {
+  let result = 0;
+  value1 = parseFloat(value1);
+  value2 = parseFloat(value2);
+  switch (operation) {
+    case "+":
+      result = value1 + value2;
+      console.log(value1 + value2);
+      break;
+    case "-":
+      result = value1 - value2;
+      break;
+    case "x":
+      result = value1 * value2;
+      break;
+    case "÷":
+      result = value1 / value2;
+      break;
+    case "%":
+      result = (value1 / 100) * value2;
+      break;
+    default:
+      result = "Unable to process request";
   }
-}
+  if (result % 1 != 0) return result;
+  else return parseInt(result);
+};
