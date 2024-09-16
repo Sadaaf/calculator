@@ -39,7 +39,7 @@ body {
   background-color: #ffffffcc;
 }
 
-.calc-button {
+[class^="calc-button"] {
   box-shadow: 0px 1px 0px 0px #bdbcbc;
   background: linear-gradient(to bottom, #eae0c2 5%, #ccc2a6 100%);
   background-color: #eae0c2;
@@ -60,11 +60,11 @@ body {
   height: 4rem;
   text-align: center;
 }
-.calc-button:hover {
+[class^="calc-button"]:hover {
   background: linear-gradient(to bottom, #ccc2a6 5%, #eae0c2 100%);
   background-color: #ccc2a6;
 }
-.calc-button:active {
+[class^="calc-button"]:active {
   position: relative;
   top: 1px;
 }
