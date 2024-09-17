@@ -14,12 +14,14 @@ const positiveNegativeToggler = document.querySelector(
   ".positive-negative-toggler"
 );
 const arithmeticOps = document.querySelectorAll(".arithmeticOp");
+const equals = document.querySelector(".equals");
 
 ///////////////////
 // functionality //
 ///////////////////
 clear.addEventListener("click", handleClear);
 positiveNegativeToggler.addEventListener("click", togglePositiveNegative);
+equals.addEventListener("click", handleEqualsOperation);
 
 arithmeticOps.forEach((a) =>
   a.addEventListener("click", handleArithmeticOperation)
@@ -35,17 +37,24 @@ for (let i = 0; i <= 9; i++) {
 ////////////////////
 //handlerFunctions//
 ////////////////////
+function togglePositiveNegative() {
+  updateDisplay(currentInput ? (currentInput *= -1) : (previousInput *= -1));
+}
+
 function handleClear() {
   setCurrentInput(null);
   setPreviousInput(null);
   updateDisplay(0);
 }
 
-function togglePositiveNegative() {
-  // TODO
+function handleEqualsOperation(e) {
+  e.target.value = null;
+  handleArithmeticOperation(e);
 }
 
 function handleNumberPress(event) {
+  // More than 15 digits == infinity
+
   const number = getValueFromEvent(event);
   if (!currentInput) {
     setCurrentInput(number);
@@ -62,7 +71,6 @@ function handleArithmeticOperation(event) {
   if (!previousInput) {
     result = currentInput;
   } else {
-    // TODO multiplication and division % with NULL returns uses 0 in place of null. Handle that case
     result = !currentInput
       ? (result = previousInput)
       : handleCalculation(previousInput, currentOperation, currentInput);
@@ -78,7 +86,7 @@ function handleArithmeticOperation(event) {
 // Helper Functions //
 //////////////////////
 function updateDisplay(value = currentInput) {
-  if (value.toString().length < 19) display.innerText = value;
+  display.innerText = value;
 }
 
 function setCurrentInput(value) {
