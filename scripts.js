@@ -59,10 +59,13 @@ function handleEqualsOperation(e) {
 }
 
 function handleDecimal() {
-  decimalUsed = true;
-  decimal.disabled = true;
-  updateDisplay(currentInput + ".");
-  setCurrentInput(currentInput.toFixed(1));
+  // TODO: null treated as zero
+  if (currentInput) {
+    decimalUsed = true;
+    decimal.disabled = true;
+    updateDisplay(currentInput + ".");
+    setCurrentInput(currentInput.toFixed(1));
+  }
 }
 
 function handleNumberPress(event) {
@@ -87,7 +90,6 @@ function handleNumberPress(event) {
 }
 
 function handleArithmeticOperation(event) {
-  // FIXME: Fractional arithmetics are not precise
   let nextOperation = event.target.value;
   let result;
   if (!previousInput) {
@@ -110,7 +112,11 @@ function handleArithmeticOperation(event) {
 // Helper Functions //
 //////////////////////
 function updateDisplay(value = currentInput) {
-  // TODO: More than 15 digits == infinity
+  if (value.toString().length > 15) {
+    value = "OUT OF BOUND";
+    setCurrentInput(null);
+    setPreviousInput(null);
+  }
   display.innerText = value;
 }
 
