@@ -63,7 +63,9 @@ function handleArithmeticOperation(event) {
     result = currentInput;
   } else {
     // TODO multiplication and division % with NULL returns uses 0 in place of null. Handle that case
-    result = handleCalculation(previousInput, currentOperation, currentInput);
+    result = !currentInput
+      ? (result = previousInput)
+      : handleCalculation(previousInput, currentOperation, currentInput);
   }
   currentOperation = nextOperation;
   nextOperation = null;
