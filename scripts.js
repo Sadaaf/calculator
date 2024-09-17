@@ -53,13 +53,10 @@ function handleClear() {
 }
 
 function handleEqualsOperation(e) {
-  // TODO: Bug after equal once direct number entry causes error
-  e.target.value = null;
   handleArithmeticOperation(e);
 }
 
 function handleDecimal() {
-  // TODO: null treated as zero
   if (currentInput) {
     decimalUsed = true;
     decimal.disabled = true;
@@ -151,6 +148,9 @@ const handleCalculation = (value1, operation, value2) => {
       break;
     case "%":
       result = (value1 / 100) * value2;
+      break;
+    case "=":
+      result = value2;
       break;
     default:
       result = "Error";
