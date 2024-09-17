@@ -3,6 +3,7 @@ let previousInput = null;
 let currentInput = null;
 let newOperation = null;
 let currentOperation = null;
+let decimalUsed = false;
 
 const display = document.querySelector(".display");
 
@@ -15,6 +16,7 @@ const positiveNegativeToggler = document.querySelector(
 );
 const arithmeticOps = document.querySelectorAll(".arithmeticOp");
 const equals = document.querySelector(".equals");
+const decimal = document.querySelector(".decimal");
 
 ///////////////////
 // functionality //
@@ -22,6 +24,7 @@ const equals = document.querySelector(".equals");
 clear.addEventListener("click", handleClear);
 positiveNegativeToggler.addEventListener("click", togglePositiveNegative);
 equals.addEventListener("click", handleEqualsOperation);
+decimal.addEventListener("click", handleDecimal);
 
 arithmeticOps.forEach((a) =>
   a.addEventListener("click", handleArithmeticOperation)
@@ -44,28 +47,47 @@ function togglePositiveNegative() {
 function handleClear() {
   setCurrentInput(null);
   setPreviousInput(null);
+  decimalUsed = false;
+  decimal.disabled = false;
   updateDisplay(0);
 }
 
 function handleEqualsOperation(e) {
+  // TODO: Bug after equal once direct number entry causes error
   e.target.value = null;
   handleArithmeticOperation(e);
 }
 
-function handleNumberPress(event) {
-  // More than 15 digits == infinity
+function handleDecimal() {
+  decimalUsed = true;
+  decimal.disabled = true;
+  updateDisplay(currentInput + ".");
+  setCurrentInput(currentInput.toFixed(1));
+}
 
+function handleNumberPress(event) {
   const number = getValueFromEvent(event);
   if (!currentInput) {
     setCurrentInput(number);
   } else {
-    setCurrentInput(parseFloat(currentInput + "" + number));
+    if (!decimalUsed) {
+      setCurrentInput(parseFloat(`${currentInput}${number}`));
+    } else {
+      let inputAsString = currentInput.toString();
+      let afterDecimal = inputAsString.split(".")[1];
+      if (afterDecimal.length === 1 && afterDecimal === "0")
+        inputAsString = inputAsString.slice(
+          0,
+          currentInput.toString().length - 1
+        );
+      setCurrentInput(parseFloat(`${inputAsString}${number}`));
+    }
   }
   updateDisplay();
 }
 
-// Handle Edge Cases
 function handleArithmeticOperation(event) {
+  // FIXME: Fractional arithmetics are not precise
   let nextOperation = event.target.value;
   let result;
   if (!previousInput) {
@@ -80,12 +102,15 @@ function handleArithmeticOperation(event) {
   setPreviousInput(result);
   setCurrentInput(null);
   updateDisplay(result ? result : 0);
+  decimalUsed = false;
+  decimal.disabled = false;
 }
 
 //////////////////////
 // Helper Functions //
 //////////////////////
 function updateDisplay(value = currentInput) {
+  // TODO: More than 15 digits == infinity
   display.innerText = value;
 }
 
