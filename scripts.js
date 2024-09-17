@@ -1,6 +1,8 @@
 // Calculator display highest digits 19
 let previousInput = null;
 let currentInput = null;
+let newOperation = null;
+let currentOperation = null;
 
 const display = document.querySelector(".display");
 
@@ -34,66 +36,61 @@ for (let i = 0; i <= 9; i++) {
 //handlerFunctions//
 ////////////////////
 function handleClear() {
-  setCurrentInput(0);
-  setPreviousInput(0);
-  updateDisplay();
+  setCurrentInput(null);
+  setPreviousInput(null);
+  updateDisplay(0);
 }
 
 function togglePositiveNegative() {
-  setCurrentInput(currentInput * -1);
-  updateDisplay();
+  // TODO
 }
 
-/**
- * 1 Show number if no number previously entered otherwise
- * 2 if press +/-/x/div/% show the number but wait for next number input
- * 3 remove previous number take next number up until +/-/x/div/% is pressed
- * 4 when +/-/x/div/%  is pressed
- * 5 do the calculation and show result.
- * 6 If new number pressed remove previous and show the new number
- *
- * take number
- * if currentValue 0
- *  currentValue+=number
- * endIf
- * else currentValue = parseFloat(currentValue.toString()+number)
- * updateDisplay()
- */
-
 function handleNumberPress(event) {
-  const number = event.target.value;
+  const number = getValueFromEvent(event);
   if (!currentInput) {
     setCurrentInput(number);
   } else {
-    setCurrentInput(parseFloat(currentInput + number));
+    setCurrentInput(parseFloat(currentInput + "" + number));
   }
-
   updateDisplay();
 }
 
+// Handle Edge Cases
 function handleArithmeticOperation(event) {
-  const operation = event.target.value;
-  const result = handleCalculation(previousInput, operation, currentInput);
-  //TODO create arithmeticOperation
+  let nextOperation = event.target.value;
+  let result;
+  if (!previousInput) {
+    result = currentInput;
+  } else {
+    // TODO multiplication and division % with NULL returns uses 0 in place of null. Handle that case
+    result = handleCalculation(previousInput, currentOperation, currentInput);
+  }
+  currentOperation = nextOperation;
+  nextOperation = null;
+  setPreviousInput(result);
+  setCurrentInput(null);
+  updateDisplay(result ? result : 0);
 }
 
 //////////////////////
 // Helper Functions //
 //////////////////////
-function updateDisplay() {
-  if (currentInput.toString().length < 19) display.innerText = currentInput;
+function updateDisplay(value = currentInput) {
+  if (value.toString().length < 19) display.innerText = value;
 }
 
 function setCurrentInput(value) {
-  if (value.toString().length < 19) {
-    currentInput = value;
+  if (value && value.toString().length > 19) {
+    return;
   }
+  currentInput = value;
 }
 
 function setPreviousInput(value) {
-  if (value.toString().length < 19) {
-    previousInput = value;
+  if (value && value.toString().length > 19) {
+    return;
   }
+  previousInput = value;
 }
 
 const handleCalculation = (value1, operation, value2) => {
@@ -120,3 +117,5 @@ const handleCalculation = (value1, operation, value2) => {
   }
   return result % 1 === 0 ? parseInt(result) : result;
 };
+
+getValueFromEvent = (e) => parseFloat(e.target.value);
